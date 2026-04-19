@@ -52,7 +52,7 @@ def home():
     services = [
         {"name": "Payment Gateway", "status": "Running", "latency": "23ms"},
         {"name": "Database Cluster", "status": "Running", "latency": "8ms"},
-        {"name": "Auth Service", "status": "Running", "latency": "15ms"},
+        {"name": "Auth Service", "status": "Down", "latency": "15ms"},
         {"name": "Redis Cache", "status": "Running", "latency": "2ms"},
         {"name": "Notification Service", "status": "Degraded", "error": "High latency"}
     ]
@@ -69,7 +69,7 @@ def home():
         "index.html",
         version=get_version(),
         time=datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"),
-        balance=5230,
+        balance=8000,
         transactions=transactions,
         services=services,
         logs=logs,
