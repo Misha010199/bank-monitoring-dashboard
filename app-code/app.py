@@ -11,18 +11,19 @@ app = Flask(__name__)
 def get_pod_name():
     return os.environ.get('HOSTNAME', socket.gethostname())
 
+
 def get_git_sha():
-   
     sha = os.environ.get('GIT_SHA')
     if sha:
         return sha[:7]
 
-   
     try:
         with open('git_sha.txt') as f:
             return f.read().strip()[:7]
     except:
         return "local-dev"
+
+
 def get_uptime():
     try:
         with open('/proc/uptime', 'r') as f:
@@ -31,6 +32,7 @@ def get_uptime():
     except:
         return "unknown"
 
+
 def get_version():
     try:
         with open("version.txt") as f:
@@ -38,9 +40,9 @@ def get_version():
     except:
         return "v1.0.0"
 
+
 @app.route('/')
 def home():
-   
     transactions = [
         {"type": "Debit", "amount": "$120", "desc": "Grocery Store", "time": "10:32 AM"},
         {"type": "Credit", "amount": "$500", "desc": "Salary Deposit", "time": "09:00 AM"},
@@ -65,6 +67,14 @@ def home():
         {"time": (datetime.now() - timedelta(minutes=15)).strftime("%H:%M:%S"), "level": "ERROR", "message": "Notification service timeout"}
     ]
 
+    cpu = psutil.cpu_percent()
+    memory = psutil.virtual_memory().percent
+
+    alerts = [
+        {"level": "CRITICAL", "message": "Payment Gateway Down"},
+        {"level": "WARNING", "message": "High Memory Usage"},
+    ]
+
     return render_template(
         "index.html",
         version=get_version(),
@@ -81,8 +91,12 @@ def home():
         git_repo=os.environ.get('GIT_REPO', 'https://github.com/Misha010199/bank-monitoring-dashboard'),
         trigger_name=os.environ.get('TRIGGER_NAME', 'bank-dashboard-trigger'),
         build_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"),
-        datetime=datetime
+        datetime=datetime,
+        cpu=cpu,
+        memory=memory,
+        alerts=alerts,
     )
+
 
 @app.route('/api')
 def api():
@@ -93,19 +107,20 @@ def api():
         "pod": get_pod_name(),
         "services": {
             "payment": "running",
-            "database": "running", 
+            "database": "running",
             "auth": "running"
         }
     })
 
+
 @app.route('/api/logs')
 def api_logs():
-   
     logs = [
         {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": "Auto-refreshed log entry"},
         {"time": datetime.now().strftime("%H:%M:%S"), "level": "DEBUG", "message": "Health check passed"}
     ]
     return jsonify({"logs": logs})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=False)
