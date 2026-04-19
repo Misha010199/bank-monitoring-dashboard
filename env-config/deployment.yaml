@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: app
-        image: asia-south1-docker.pkg.dev/YOUR_PROJECT_ID/bank-repo/bank-dashboard:latest
+        image: asia-south1-docker.pkg.dev/bank-dashboard-project-493816/bank-repo/bank-dashboard:latest
         ports:
         - containerPort: 8080
