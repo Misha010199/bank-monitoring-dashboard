@@ -9,13 +9,11 @@ steps:
       '.'
     ]
 
-
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard:$SHORT_SHA']
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard:latest']
-
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'bash'
@@ -27,3 +25,6 @@ steps:
       kubectl apply -f env-config/service.yaml
       kubectl rollout restart deployment/bank-dashboard
       kubectl rollout status deployment/bank-dashboard
+
+options:
+  logging: CLOUD_LOGGING_ONLY
