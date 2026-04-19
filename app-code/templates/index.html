@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏦 Cloud Bank | GitOps Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+       
+        <div class="header">
+            <div class="header-left">
+                <h1>🏦 Cloud Bank Platform</h1>
+                <div class="badge-group">
+                    <span class="badge badge-green">● GitOps Enabled</span>
+                    <span class="badge badge-blue">GKE Deployment</span>
+                    <span class="badge badge-purple">Cloud Build CI/CD</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="deployment-info">
+                    <span class="label">Namespace</span>
+                    <span class="value">{{ namespace }}</span>
+                </div>
+            </div>
+        </div>
+
+    
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">💰</div>
+                <div class="metric-content">
+                    <span class="metric-label">Current Balance</span>
+                    <span class="metric-value">${{ '{:,.0f}'.format(balance) }}</span>
+                    <span class="metric-trend">Updated just now</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">📦</div>
+                <div class="metric-content">
+                    <span class="metric-label">Deployment Version</span>
+                    <span class="metric-value">{{ version }}</span>
+                    <span class="metric-trend">Git SHA: {{ git_sha[:7] if git_sha else 'N/A' }}</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">🕐</div>
+                <div class="metric-content">
+                    <span class="metric-label">Last Deployment</span>
+                    <span class="metric-value">{{ time }}</span>
+                    <span class="metric-trend">UTC Timezone</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">🎯</div>
+                <div class="metric-content">
+                    <span class="metric-label">Uptime</span>
+                    <span class="metric-value">{{ uptime }}</span>
+                    <span class="metric-trend">Pod: {{ pod_name }}</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="two-columns">
+       
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>💸 Recent Transactions</h2>
+                    <span class="panel-count">{{ transactions|length }} items</span>
+                </div>
+                <div class="transaction-list">
+                    {% for t in transactions %}
+                    <div class="transaction-item">
+                        <div class="transaction-icon {{ t.type|lower }}">
+                            {{ '⬇️' if t.type == 'Debit' else '⬆️' }}
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-desc">{{ t.desc }}</div>
+                            <div class="transaction-time">{{ t.time if t.time else 'Just now' }}</div>
+                        </div>
+                        <div class="transaction-amount {{ t.type|lower }}">
+                            {{ '-' if t.type == 'Debit' else '+' }}{{ t.amount }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>🖥️ Service Health</h2>
+                    <span class="panel-count">{{ services|selectattr('status', 'equalto', 'Running')|list|length }}/{{ services|length }} operational</span>
+                </div>
+                <div class="service-list">
+                    {% for s in services %}
+                    <div class="service-item">
+                        <div class="service-info">
+                            <span class="service-name">{{ s.name }}</span>
+                            <span class="service-status status-{{ s.status|lower }}">
+                                {{ '●' }} {{ s.status }}
+                            </span>
+                        </div>
+                        <div class="service-latency">
+                            {% if s.status == 'Running' %}
+                            <span class="latency-good">{{ s.latency or '12ms' }}</span>
+                            {% else %}
+                            <span class="latency-bad">{{ s.error or 'Timeout' }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="panel">
+            <div class="panel-header">
+                <h2>📋 System Log Stream</h2>
+                <button class="btn-small" onclick="fetchLogs()">↻ Refresh</button>
+            </div>
+            <div class="logs-container" id="logContainer">
+                {% for log in logs %}
+                <div class="log-entry">
+                    <span class="log-time">{{ log.time if log.time else datetime.now().strftime('%H:%M:%S') }}</span>
+                    <span class="log-level {{ log.level|lower }}">[{{ log.level }}]</span>
+                    <span class="log-message">{{ log.message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+      
+        <div class="gitops-footer">
+            <div class="gitops-row">
+                <span class="gitops-label">📦 Image:</span>
+                <code class="gitops-code">{{ image_tag }}</code>
+            </div>
+            <div class="gitops-row">
+                <span class="gitops-label">🔗 Repository:</span>
+                <code class="gitops-code">{{ git_repo }}</code>
+            </div>
+            <div class="gitops-row">
+                <span class="gitops-label">⚙️ Pipeline:</span>
+                <span>Cloud Build Trigger: <strong>{{ trigger_name }}</strong></span>
+                <span class="build-status">✓ Last build: {{ build_time }}</span>
+            </div>
+        </div>
+
+
+        <div class="api-link">
+            <a href="/api" target="_blank">🔌 View JSON API →</a>
+        </div>
+    </div>
+
+    <script>
+      
+        function fetchLogs() {
+            fetch('/api/logs')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('logContainer');
+                    container.innerHTML = data.logs.map(log => `
+                        <div class="log-entry">
+                            <span class="log-time">${log.time}</span>
+                            <span class="log-level ${log.level.toLowerCase()}">[${log.level}]</span>
+                            <span class="log-message">${log.message}</span>
+                        </div>
+                    `).join('');
+                })
+                .catch(err => console.log('Log refresh failed'));
+        }
+        
+      
+        setInterval(fetchLogs, 15000);
+    </script>
+</body>
+</html>

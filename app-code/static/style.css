@@ -1,0 +1,462 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #e2e8f0;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+}
+
+.badge-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-green {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.badge-blue {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.badge-purple {
+    background: rgba(168, 85, 247, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+}
+
+.deployment-info {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 16px;
+    border-radius: 12px;
+}
+
+.deployment-info .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    display: block;
+}
+
+.deployment-info .value {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.metric-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(96, 165, 250, 0.3);
+}
+
+.metric-icon {
+    font-size: 40px;
+}
+
+.metric-content {
+    flex: 1;
+}
+
+.metric-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    display: block;
+    margin: 4px 0;
+}
+
+.metric-trend {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.two-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+
+.panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.panel-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.panel-count {
+    font-size: 12px;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.transaction-list {
+    padding: 8px 0;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.transaction-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.transaction-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+.transaction-icon.debit {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.transaction-icon.credit {
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.transaction-details {
+    flex: 1;
+}
+
+.transaction-desc {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.transaction-time {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.transaction-amount.debit {
+    color: #f87171;
+}
+
+.transaction-amount.credit {
+    color: #4ade80;
+}
+
+
+.service-list {
+    padding: 8px 0;
+}
+
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.service-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.service-name {
+    font-weight: 500;
+}
+
+.service-status {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.status-running {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+}
+
+.status-down {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+.status-degraded {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+}
+
+.latency-good {
+    color: #4ade80;
+    font-size: 13px;
+}
+
+.latency-bad {
+    color: #f87171;
+    font-size: 13px;
+}
+
+
+.logs-container {
+    padding: 16px 24px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.log-entry {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.log-time {
+    color: #64748b;
+}
+
+.log-level {
+    font-weight: 600;
+}
+
+.log-level.info {
+    color: #60a5fa;
+}
+
+.log-level.error {
+    color: #f87171;
+}
+
+.log-level.warning {
+    color: #fbbf24;
+}
+
+.log-message {
+    color: #cbd5e1;
+    word-break: break-all;
+}
+
+
+.gitops-footer {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.gitops-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    flex-wrap: wrap;
+}
+
+.gitops-row:last-child {
+    margin-bottom: 0;
+}
+
+.gitops-label {
+    color: #94a3b8;
+    min-width: 80px;
+}
+
+.gitops-code {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    color: #a78bfa;
+}
+
+.build-status {
+    margin-left: auto;
+    color: #4ade80;
+}
+
+
+.api-link {
+    text-align: center;
+    padding: 20px;
+}
+
+.api-link a {
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.api-link a:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
+.btn-small {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.btn-small:hover {
+    background: rgba(96, 165, 250, 0.2);
+}
+
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(96, 165, 250, 0.4);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(96, 165, 250, 0.6);
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .two-columns {
+        grid-template-columns: 1fr;
+    }
+    
+    .header {
+        flex-direction: column;
+    }
+    
+    .transaction-item, .service-item {
+        flex-wrap: wrap;
+    }
+    
+    .gitops-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .build-status {
+        margin-left: 0;
+    }
+}

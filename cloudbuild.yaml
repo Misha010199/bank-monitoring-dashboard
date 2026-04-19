@@ -1,0 +1,15 @@
+steps:
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard', '.']
+
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard']
+
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'env-config/deployment.yaml']
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'env-config/service.yaml']
