@@ -1,15 +1,29 @@
 steps:
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard', '.']
+  args:
+    [
+      'build',
+      '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard:$SHORT_SHA',
+      '-t', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard:latest',
+      '.'
+    ]
 
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard']
+  args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard:$SHORT_SHA']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'asia-south1-docker.pkg.dev/$PROJECT_ID/bank-repo/bank-dashboard:latest']
 
 
-- name: 'gcr.io/cloud-builders/kubectl'
-  args: ['apply', '-f', 'env-config/deployment.yaml']
-
-- name: 'gcr.io/cloud-builders/kubectl'
-  args: ['apply', '-f', 'env-config/service.yaml']
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      gcloud container clusters get-credentials bank-cluster --region asia-south1 --project $PROJECT_ID
+      kubectl apply -f env-config/deployment.yaml
+      kubectl apply -f env-config/service.yaml
+      kubectl rollout restart deployment/bank-dashboard
+      kubectl rollout status deployment/bank-dashboard

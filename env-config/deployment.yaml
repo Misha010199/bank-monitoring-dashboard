@@ -12,8 +12,9 @@ spec:
       labels:
         app: bank-dashboard
     spec:
-      containers:
-      - name: app
-        image: asia-south1-docker.pkg.dev/bank-dashboard-project-493816/bank-repo/bank-dashboard:latest
-        ports:
-        - containerPort: 8080
+   containers:
+- name: app
+  image: asia-south1-docker.pkg.dev/bank-dashboard-project-493816/bank-repo/bank-dashboard:latest
+  imagePullPolicy: Always
+  ports:
+  - containerPort: 8080
