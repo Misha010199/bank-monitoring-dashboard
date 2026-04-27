@@ -1,5 +1,14 @@
 steps:
 
+- name: 'gcr.io/cloud-builders/bash'
+  args:
+    - '-c'
+    - |
+      echo $SHORT_SHA > app-code/git_sha.txt
+      echo "$(date -u +'%Y-%m-%d %H:%M:%S UTC')" > app-code/build_time.txt
+      echo "Trigger: $TRIGGER_NAME" >> app-code/build_info.txt
+      echo "Build ID: $BUILD_ID" >> app-code/build_info.txt
+
 - name: 'gcr.io/cloud-builders/docker'
   args:
     [

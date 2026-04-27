@@ -216,6 +216,37 @@
       }
 
       setInterval(fetchLogs, 5000);
+
+      function checkDeploymentStatus() {
+        fetch("/api/deployment-info")
+          .then((response) => response.json())
+          .then((data) => {
+            const buildStatusElement = document.querySelector(".build-status");
+            if (buildStatusElement) {
+              buildStatusElement.innerHTML = `✓ Last build: ${data.build_time}`;
+              buildStatusElement.style.color = "#4ade80";
+            }
+
+            const logContainer = document.getElementById("logContainer");
+            const time = new Date().toLocaleTimeString();
+            const logEntry = `
+        <div class="log-entry">
+          <span class="log-time">${time}</span>
+          <span class="log-level info">[INFO]</span>
+          <span class="log-message">🔍 Deployment check: Git commit ${data.git_commit} | Build: ${data.build_time}</span>
+        </div>
+      `;
+            logContainer.insertAdjacentHTML("afterbegin", logEntry);
+          })
+          .catch((err) => console.log("Deployment status check failed"));
+      }
+
+      setInterval(checkDeploymentStatus, 30000);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        checkDeploymentStatus();
+        console.log("✅ Real GitOps deployment tracking active");
+      });
     </script>
   </body>
 </html>
