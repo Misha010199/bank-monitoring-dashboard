@@ -22,7 +22,6 @@ body {
   padding: 24px;
 }
 
-/* Header Styles */
 .header {
   display: flex;
   justify-content: space-between;
@@ -53,6 +52,13 @@ body {
   border-radius: 20px;
   font-size: 12px;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge i {
+  font-size: 11px;
 }
 
 .badge-green {
@@ -84,6 +90,11 @@ body {
   text-transform: uppercase;
   color: #94a3b8;
   display: block;
+  margin-bottom: 4px;
+}
+
+.deployment-info .label i {
+  margin-right: 4px;
 }
 
 .deployment-info .value {
@@ -117,7 +128,17 @@ body {
 }
 
 .metric-icon {
-  font-size: 40px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+}
+
+.metric-icon i {
+  font-size: 28px;
 }
 
 .metric-content {
@@ -170,6 +191,14 @@ body {
 .panel-header h2 {
   font-size: 18px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-header h2 i {
+  color: #60a5fa;
+  font-size: 18px;
 }
 
 .panel-count {
@@ -178,6 +207,9 @@ body {
   background: rgba(255, 255, 255, 0.05);
   padding: 4px 10px;
   border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .transaction-list {
@@ -204,15 +236,17 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .transaction-icon.debit {
   background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
 }
 
 .transaction-icon.credit {
   background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
 }
 
 .transaction-details {
@@ -227,6 +261,10 @@ body {
 .transaction-time {
   font-size: 11px;
   color: #64748b;
+}
+
+.transaction-time i {
+  margin-right: 4px;
 }
 
 .transaction-amount {
@@ -257,8 +295,12 @@ body {
 .service-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
+}
+
+.service-info i {
+  font-size: 16px;
 }
 
 .service-name {
@@ -269,6 +311,13 @@ body {
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.service-status i {
+  font-size: 8px;
 }
 
 .status-running {
@@ -289,11 +338,17 @@ body {
 .latency-good {
   color: #4ade80;
   font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .latency-bad {
   color: #f87171;
   font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .logs-container {
@@ -311,10 +366,14 @@ body {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .log-time {
   color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .log-level {
@@ -338,6 +397,59 @@ body {
   word-break: break-all;
 }
 
+.log-message i {
+  margin-right: 6px;
+}
+
+.alerts-container {
+  padding: 16px 24px;
+}
+
+.alert-entry {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.alert-entry:last-child {
+  border-bottom: none;
+}
+
+.alert-level {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-level.success {
+  color: #4ade80;
+}
+
+.alert-level.info {
+  color: #60a5fa;
+}
+
+.alert-level.warning {
+  color: #fbbf24;
+}
+
+.alert-level.error {
+  color: #f87171;
+}
+
+.alert-level.critical {
+  color: #f87171;
+}
+
+.alert-message {
+  color: #cbd5e1;
+  flex: 1;
+}
+
 .gitops-footer {
   background: rgba(0, 0, 0, 0.4);
   border-radius: 16px;
@@ -352,6 +464,7 @@ body {
   margin-bottom: 12px;
   font-size: 13px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .gitops-row:last-child {
@@ -360,20 +473,27 @@ body {
 
 .gitops-label {
   color: #94a3b8;
-  min-width: 80px;
+  min-width: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .gitops-code {
   background: rgba(0, 0, 0, 0.5);
-  padding: 2px 8px;
+  padding: 4px 10px;
   border-radius: 6px;
   font-family: monospace;
   color: #a78bfa;
+  font-size: 12px;
 }
 
 .build-status {
   margin-left: auto;
   color: #4ade80;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .api-link {
@@ -386,26 +506,14 @@ body {
   text-decoration: none;
   font-size: 14px;
   transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .api-link a:hover {
   color: #93c5fd;
   text-decoration: underline;
-}
-
-.btn-small {
-  background: rgba(255, 255, 255, 0.08);
-  border: none;
-  color: #e2e8f0;
-  padding: 6px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.btn-small:hover {
-  background: rgba(96, 165, 250, 0.2);
 }
 
 ::-webkit-scrollbar {
@@ -452,9 +560,14 @@ body {
   .gitops-row {
     flex-direction: column;
     gap: 6px;
+    align-items: flex-start;
   }
 
   .build-status {
     margin-left: 0;
+  }
+
+  .gitops-label {
+    min-width: auto;
   }
 }

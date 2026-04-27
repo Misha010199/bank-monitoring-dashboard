@@ -41,14 +41,12 @@ def get_version():
         return "v1.0.0"
 
 
-
 def get_real_build_time():
     try:
         with open('build_time.txt') as f:
             return f.read().strip()
     except:
-        return datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S PKT")
 
 
 def get_build_info():
@@ -59,12 +57,37 @@ def get_build_info():
         return "Build info not available"
 
 
+
+def get_build_details():
+    details = {}
+    try:
+        with open('build_details.txt') as f:
+            for line in f:
+                if ': ' in line:
+                    key, value = line.strip().split(': ', 1)
+                    details[key] = value
+    except:
+      
+        details = {
+            'BUILD_ID': os.environ.get('BUILD_ID', 'N/A'),
+            'TRIGGER_NAME': os.environ.get('TRIGGER_NAME', 'bank-trigger'),
+            'BUILD_STATUS': 'SUCCESS',
+            'BRANCH_NAME': 'main',
+            'REPO_NAME': 'bank-monitoring-dashboard',
+            'COMMIT_SHA': get_git_sha(),
+            'SHORT_SHA': get_git_sha(),
+            'PROJECT_ID': os.environ.get('PROJECT_ID', 'bank-dashboard-project-493816'),
+            'LOCATION': 'asia-south1'
+        }
+    return details
+
+
 @app.route('/')
 def home():
- 
     real_build_time = get_real_build_time()
     real_git_sha = get_git_sha()
     real_build_info = get_build_info()
+    build_details = get_build_details()   
     
     transactions = [
         {"type": "Debit", "amount": "$120", "desc": "Grocery Store", "time": "10:32 AM"},
@@ -77,12 +100,11 @@ def home():
     services = [
         {"name": "Payment Gateway", "status": "Running", "latency": "23ms"},
         {"name": "Database Cluster", "status": "Running", "latency": "8ms"},
-        {"name": "Auth Service", "status": "Down", "latency": "15ms"},
+        {"name": "Auth Service", "status": "Running", "latency": "15ms"},
         {"name": "Redis Cache", "status": "Running", "latency": "2ms"},
-        {"name": "Notification Service", "status": "Degraded", "error": "High latency"}
+        {"name": "Notification Service", "status": "Running", "latency": "45ms"}
     ]
 
-  
     logs = [
         {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"✅ Git commit: {real_git_sha} - Deployed via Cloud Build"},
         {"time": real_build_time.split()[1] if ' ' in real_build_time else datetime.now().strftime("%H:%M:%S"), "level": "SUCCESS", "message": f"🚀 Cloud Build triggered deployment at {real_build_time}"},
@@ -97,35 +119,38 @@ def home():
     alerts = [
         {"level": "SUCCESS", "message": f"✅ Latest Git commit {real_git_sha} deployed successfully"},
         {"level": "INFO", "message": f"⏱️  Last Cloud Build: {real_build_time}"},
+        {"level": "INFO", "message": f"🆔 Build ID: {build_details.get('BUILD_ID', 'N/A')[:20]}..."},
         {"level": "INFO", "message": "🟢 GKE cluster health: All nodes ready"},
     ]
 
     return render_template(
         "index.html",
         version=get_version(),
-        time=datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"),
-        balance=8000,
+        time=datetime.now().strftime("%Y-%m-%d %H:%M:%S PKT"),
+        balance=8247,
         transactions=transactions,
         services=services,
         logs=logs,
-        namespace=os.environ.get('NAMESPACE', 'default'),
+        namespace=os.environ.get('NAMESPACE', 'production'),
         git_sha=real_git_sha,
         uptime=get_uptime(),
         pod_name=get_pod_name(),
         image_tag=os.environ.get('IMAGE_TAG', f"build-{real_git_sha}"),
         git_repo=os.environ.get('GIT_REPO', 'https://github.com/Misha010199/bank-monitoring-dashboard'),
         trigger_name=os.environ.get('TRIGGER_NAME', 'bank-dashboard-trigger'),
-        build_time=real_build_time,  
+        build_time=real_build_time,
         datetime=datetime,
         cpu=cpu,
         memory=memory,
         alerts=alerts,
         build_info=real_build_info,
+        build_details=build_details,  
     )
 
 
 @app.route('/api')
 def api():
+    build_details = get_build_details()
     return jsonify({
         "version": get_version(),
         "status": "healthy",
@@ -133,6 +158,8 @@ def api():
         "pod": get_pod_name(),
         "last_build_time": get_real_build_time(),
         "git_commit": get_git_sha(),
+        "build_id": build_details.get('BUILD_ID', 'N/A'),
+        "trigger_name": build_details.get('TRIGGER_NAME', 'N/A'),
         "services": {
             "payment": "running",
             "database": "running",
@@ -143,9 +170,11 @@ def api():
 
 @app.route('/api/logs')
 def api_logs():
+    build_details = get_build_details()
     logs = [
         {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"Git commit: {get_git_sha()} - Active"},
-        {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"Last build: {get_real_build_time()}"},
+        {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"Build ID: {build_details.get('BUILD_ID', 'N/A')[:20]}..."},
+        {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"Trigger: {build_details.get('TRIGGER_NAME', 'N/A')}"},
         {"time": datetime.now().strftime("%H:%M:%S"), "level": "DEBUG", "message": "Health check passed"}
     ]
     return jsonify({"logs": logs})
@@ -153,13 +182,17 @@ def api_logs():
 
 @app.route('/api/deployment-info')
 def deployment_info():
-    """NEW API endpoint to show REAL deployment status"""
+    build_details = get_build_details()
     return jsonify({
         "git_commit": get_git_sha(),
         "build_time": get_real_build_time(),
         "build_info": get_build_info(),
         "pod_name": get_pod_name(),
         "uptime": get_uptime(),
+        "build_id": build_details.get('BUILD_ID', 'N/A'),
+        "trigger_name": build_details.get('TRIGGER_NAME', 'N/A'),
+        "branch": build_details.get('BRANCH_NAME', 'main'),
+        "repo": build_details.get('REPO_NAME', 'bank-monitoring-dashboard'),
         "timestamp": datetime.now().isoformat()
     })
 

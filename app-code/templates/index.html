@@ -3,27 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🏦 Cloud Bank | GitOps Dashboard</title>
+    <title>Cloud Bank | GitOps Dashboard</title>
     <link rel="stylesheet" href="/static/style.css" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
   </head>
   <body>
     <div class="container">
       <div class="header">
         <div class="header-left">
-          <h1>🏦 Cloud Bank Platform</h1>
+          <h1>
+            <i class="fas fa-cloud-upload-alt" style="margin-right: 12px"></i>
+            Cloud Bank Platform
+          </h1>
           <div class="badge-group">
-            <span class="badge badge-green">● GitOps Enabled</span>
-            <span class="badge badge-blue">GKE Deployment</span>
-            <span class="badge badge-purple">Cloud Build CI/CD</span>
+            <span class="badge badge-green"
+              ><i class="fas fa-check-circle"></i> GitOps Enabled</span
+            >
+            <span class="badge badge-blue"
+              ><i class="fas fa-server"></i> GKE Deployment</span
+            >
+            <span class="badge badge-purple"
+              ><i class="fas fa-rocket"></i> Cloud Build CI/CD</span
+            >
           </div>
         </div>
         <div class="header-right">
           <div class="deployment-info">
-            <span class="label">Namespace</span>
+            <span class="label"><i class="fas fa-tag"></i> Namespace</span>
             <span class="value">{{ namespace }}</span>
           </div>
         </div>
@@ -31,7 +45,9 @@
 
       <div class="metrics-grid">
         <div class="metric-card">
-          <div class="metric-icon">💰</div>
+          <div class="metric-icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
           <div class="metric-content">
             <span class="metric-label">Current Balance</span>
             <span class="metric-value">${{ '{:,.0f}'.format(balance) }}</span>
@@ -39,7 +55,9 @@
           </div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon">📦</div>
+          <div class="metric-icon">
+            <i class="fas fa-cube"></i>
+          </div>
           <div class="metric-content">
             <span class="metric-label">Deployment Version</span>
             <span class="metric-value">{{ version }}</span>
@@ -49,23 +67,29 @@
           </div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon">🕐</div>
+          <div class="metric-icon">
+            <i class="far fa-clock"></i>
+          </div>
           <div class="metric-content">
             <span class="metric-label">Last Deployment</span>
-            <span class="metric-value">{{ time }}</span>
-            <span class="metric-trend">UTC Timezone</span>
+            <span class="metric-value">{{ build_time }}</span>
+            <span class="metric-trend">PKT Timezone</span>
           </div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon">🎯</div>
+          <div class="metric-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
           <div class="metric-content">
             <span class="metric-label">Uptime</span>
             <span class="metric-value">{{ uptime }}</span>
-            <span class="metric-trend">Pod: {{ pod_name }}</span>
+            <span class="metric-trend">Pod: {{ pod_name[:20] }}</span>
           </div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon">🖥️</div>
+          <div class="metric-icon">
+            <i class="fas fa-microchip"></i>
+          </div>
           <div class="metric-content">
             <span class="metric-label">CPU Usage</span>
             <span class="metric-value">{{ cpu }}%</span>
@@ -74,7 +98,9 @@
         </div>
 
         <div class="metric-card">
-          <div class="metric-icon">💾</div>
+          <div class="metric-icon">
+            <i class="fas fa-memory"></i>
+          </div>
           <div class="metric-content">
             <span class="metric-label">Memory Usage</span>
             <span class="metric-value">{{ memory }}%</span>
@@ -86,19 +112,24 @@
       <div class="two-columns">
         <div class="panel">
           <div class="panel-header">
-            <h2>💸 Recent Transactions</h2>
+            <h2><i class="fas fa-exchange-alt"></i> Recent Transactions</h2>
             <span class="panel-count">{{ transactions|length }} items</span>
           </div>
           <div class="transaction-list">
             {% for t in transactions %}
             <div class="transaction-item">
               <div class="transaction-icon {{ t.type|lower }}">
-                {{ '⬇️' if t.type == 'Debit' else '⬆️' }}
+                {% if t.type == 'Debit' %}
+                <i class="fas fa-arrow-down"></i>
+                {% else %}
+                <i class="fas fa-arrow-up"></i>
+                {% endif %}
               </div>
               <div class="transaction-details">
                 <div class="transaction-desc">{{ t.desc }}</div>
                 <div class="transaction-time">
-                  {{ t.time if t.time else 'Just now' }}
+                  <i class="far fa-calendar-alt"></i> {{ t.time if t.time else
+                  'Just now' }}
                 </div>
               </div>
               <div class="transaction-amount {{ t.type|lower }}">
@@ -111,26 +142,43 @@
 
         <div class="panel">
           <div class="panel-header">
-            <h2>🖥️ Service Health</h2>
+            <h2><i class="fas fa-heartbeat"></i> Service Health</h2>
             <span class="panel-count"
-              >{{ services|selectattr('status', 'equalto',
-              'Running')|list|length }}/{{ services|length }} operational</span
+              ><i class="fas fa-check-circle"></i> {{
+              services|selectattr('status', 'equalto', 'Running')|list|length
+              }}/{{ services|length }} operational</span
             >
           </div>
           <div class="service-list">
             {% for s in services %}
             <div class="service-item">
               <div class="service-info">
+                {% if s.status == 'Running' %}
+                <i class="fas fa-check-circle" style="color: #4ade80"></i>
+                {% elif s.status == 'Down' %}
+                <i class="fas fa-times-circle" style="color: #f87171"></i>
+                {% else %}
+                <i
+                  class="fas fa-exclamation-triangle"
+                  style="color: #fbbf24"
+                ></i>
+                {% endif %}
                 <span class="service-name">{{ s.name }}</span>
                 <span class="service-status status-{{ s.status|lower }}">
-                  {{ '●' }} {{ s.status }}
+                  <i class="fas fa-circle"></i> {{ s.status }}
                 </span>
               </div>
               <div class="service-latency">
                 {% if s.status == 'Running' %}
-                <span class="latency-good">{{ s.latency or '12ms' }}</span>
+                <span class="latency-good"
+                  ><i class="fas fa-tachometer-alt"></i> {{ s.latency or '12ms'
+                  }}</span
+                >
                 {% else %}
-                <span class="latency-bad">{{ s.error or 'Timeout' }}</span>
+                <span class="latency-bad"
+                  ><i class="fas fa-exclamation"></i> {{ s.error or 'Timeout'
+                  }}</span
+                >
                 {% endif %}
               </div>
             </div>
@@ -141,14 +189,14 @@
 
       <div class="panel">
         <div class="panel-header">
-          <h2>📋 System Log Stream</h2>
+          <h2><i class="fas fa-terminal"></i> System Log Stream</h2>
         </div>
         <div class="logs-container" id="logContainer">
           {% for log in logs %}
           <div class="log-entry">
             <span class="log-time"
-              >{{ log.time if log.time else datetime.now().strftime('%H:%M:%S')
-              }}</span
+              ><i class="far fa-clock"></i> {{ log.time if log.time else
+              datetime.now().strftime('%H:%M:%S') }}</span
             >
             <span class="log-level {{ log.level|lower }}"
               >[{{ log.level }}]</span
@@ -161,35 +209,139 @@
 
       <div class="panel">
         <div class="panel-header">
-          <h2>🚨 System Alerts</h2>
+          <h2><i class="fas fa-bell"></i> System Alerts</h2>
         </div>
+        <div class="alerts-container">
+          {% for alert in alerts %}
+          <div class="alert-entry">
+            <span class="alert-level {{ alert.level|lower }}">
+              <i class="fas fa-exclamation-triangle"></i> {{ alert.level }}
+            </span>
+            <span class="alert-message">{{ alert.message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
 
-        {% for alert in alerts %}
-        <div class="log-entry">
-          <span class="log-level error">{{ alert.level }}</span>
-          <span class="log-message">{{ alert.message }}</span>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>
+            <i class="fas fa-cloud-upload-alt"></i> Cloud Build Execution
+            Details
+          </h2>
+          <span class="panel-count"
+            ><i class="fas fa-database"></i> Live from GCP</span
+          >
         </div>
-        {% endfor %}
+        <div style="padding: 20px">
+          <div class="gitops-row">
+            <span class="gitops-label"
+              ><i class="fas fa-id-card"></i> Build ID:</span
+            >
+            <code class="gitops-code"
+              >{{ build_details.get('BUILD_ID', 'N/A')[:30] if build_details
+              else 'N/A' }}...</code
+            >
+            <span class="build-status"
+              ><i class="fas fa-check-circle"></i> {{
+              build_details.get('BUILD_STATUS', 'SUCCESS') if build_details else
+              'SUCCESS' }}</span
+            >
+          </div>
+          <div class="gitops-row">
+            <span class="gitops-label"
+              ><i class="fas fa-bolt"></i> Trigger:</span
+            >
+            <span
+              ><strong
+                >{{ build_details.get('TRIGGER_NAME', trigger_name) if
+                build_details else trigger_name }}</strong
+              ></span
+            >
+            <span class="build-status"
+              ><i class="fas fa-code-branch"></i> GitOps Pipeline</span
+            >
+          </div>
+          <div class="gitops-row">
+            <span class="gitops-label"
+              ><i class="fas fa-folder-open"></i> Repository:</span
+            >
+            <span
+              >{{ build_details.get('REPO_NAME', 'bank-monitoring-dashboard') if
+              build_details else 'bank-monitoring-dashboard' }}</span
+            >
+            <span class="build-status"
+              ><i class="fas fa-code-branch"></i> {{
+              build_details.get('BRANCH_NAME', 'main') if build_details else
+              'main' }}</span
+            >
+          </div>
+          <div class="gitops-row">
+            <span class="gitops-label"
+              ><i class="fas fa-code"></i> Commit:</span
+            >
+            <code class="gitops-code"
+              >{{ build_details.get('SHORT_SHA', git_sha) if build_details else
+              git_sha }}</code
+            >
+            <span class="build-status"
+              ><i class="fab fa-git-alt"></i> {{
+              (build_details.get('COMMIT_SHA', git_sha) if build_details else
+              git_sha)[:40] }}</span
+            >
+          </div>
+          <div class="gitops-row">
+            <span class="gitops-label"
+              ><i class="fas fa-map-marker-alt"></i> Region:</span
+            >
+            <span
+              >{{ build_details.get('LOCATION', 'asia-south1') if build_details
+              else 'asia-south1' }}</span
+            >
+            <span class="build-status"
+              ><i class="fas fa-cloud"></i> Google Cloud</span
+            >
+          </div>
+          <div class="gitops-row">
+            <span class="gitops-label"
+              ><i class="fas fa-project-diagram"></i> Project:</span
+            >
+            <code class="gitops-code"
+              >{{ build_details.get('PROJECT_ID',
+              'bank-dashboard-project-493816') if build_details else
+              'bank-dashboard-project-493816' }}</code
+            >
+          </div>
+        </div>
       </div>
 
       <div class="gitops-footer">
         <div class="gitops-row">
-          <span class="gitops-label">📦 Image:</span>
+          <span class="gitops-label"><i class="fas fa-image"></i> Image:</span>
           <code class="gitops-code">{{ image_tag }}</code>
         </div>
         <div class="gitops-row">
-          <span class="gitops-label">🔗 Repository:</span>
+          <span class="gitops-label"
+            ><i class="fab fa-github"></i> Repository:</span
+          >
           <code class="gitops-code">{{ git_repo }}</code>
         </div>
         <div class="gitops-row">
-          <span class="gitops-label">⚙️ Pipeline:</span>
+          <span class="gitops-label"
+            ><i class="fas fa-cogs"></i> Pipeline:</span
+          >
           <span>Cloud Build Trigger: <strong>{{ trigger_name }}</strong></span>
-          <span class="build-status">✓ Last build: {{ build_time }}</span>
+          <span class="build-status" id="buildStatus"
+            ><i class="fas fa-check-circle"></i> Last build: {{ build_time
+            }}</span
+          >
         </div>
       </div>
 
       <div class="api-link">
-        <a href="/api" target="_blank">🔌 View JSON API →</a>
+        <a href="/api" target="_blank"
+          ><i class="fas fa-external-link-alt"></i> View JSON API →</a
+        >
       </div>
     </div>
 
@@ -203,7 +355,7 @@
               .map(
                 (log) => `
                         <div class="log-entry">
-                            <span class="log-time">${log.time}</span>
+                            <span class="log-time"><i class="far fa-clock"></i> ${log.time}</span>
                             <span class="log-level ${log.level.toLowerCase()}">[${log.level}]</span>
                             <span class="log-message">${log.message}</span>
                         </div>
@@ -214,15 +366,13 @@
           .catch((err) => console.log("Log refresh failed"));
       }
 
-      setInterval(fetchLogs, 5000);
-
       function checkDeploymentStatus() {
         fetch("/api/deployment-info")
           .then((response) => response.json())
           .then((data) => {
-            const buildStatusElement = document.querySelector(".build-status");
+            const buildStatusElement = document.getElementById("buildStatus");
             if (buildStatusElement) {
-              buildStatusElement.innerHTML = `✓ Last build: ${data.build_time}`;
+              buildStatusElement.innerHTML = `<i class="fas fa-check-circle"></i> Last build: ${data.build_time}`;
               buildStatusElement.style.color = "#4ade80";
             }
 
@@ -230,9 +380,9 @@
             const time = new Date().toLocaleTimeString();
             const logEntry = `
         <div class="log-entry">
-          <span class="log-time">${time}</span>
+          <span class="log-time"><i class="far fa-clock"></i> ${time}</span>
           <span class="log-level info">[INFO]</span>
-          <span class="log-message">🔍 Deployment check: Git commit ${data.git_commit} | Build: ${data.build_time}</span>
+          <span class="log-message"><i class="fas fa-cog"></i> Build ${data.build_id?.substring(0, 12) || "N/A"}... | Trigger: ${data.trigger_name} | Commit: ${data.git_commit}</span>
         </div>
       `;
             logContainer.insertAdjacentHTML("afterbegin", logEntry);
@@ -240,11 +390,14 @@
           .catch((err) => console.log("Deployment status check failed"));
       }
 
+      setInterval(fetchLogs, 5000);
+
       setInterval(checkDeploymentStatus, 30000);
 
       document.addEventListener("DOMContentLoaded", () => {
         checkDeploymentStatus();
         console.log("✅ Real GitOps deployment tracking active");
+        console.log("🚀 Dashboard connected to GKE cluster");
       });
     </script>
   </body>
