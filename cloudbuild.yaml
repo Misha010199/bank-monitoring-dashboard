@@ -1,13 +1,15 @@
 steps:
-
-- name: 'gcr.io/cloud-builders/bash'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'bash'
   args:
     - '-c'
     - |
       echo $SHORT_SHA > app-code/git_sha.txt
       echo "$(date -u +'%Y-%m-%d %H:%M:%S UTC')" > app-code/build_time.txt
-      echo "Trigger: $TRIGGER_NAME" >> app-code/build_info.txt
+      echo "Trigger: $TRIGGER_NAME" > app-code/build_info.txt
       echo "Build ID: $BUILD_ID" >> app-code/build_info.txt
+      echo "Commit: $SHORT_SHA" >> app-code/build_info.txt
+      echo "✅ Build info injected for commit: $SHORT_SHA"
 
 - name: 'gcr.io/cloud-builders/docker'
   args:
