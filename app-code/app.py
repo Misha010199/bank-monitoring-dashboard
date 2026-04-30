@@ -4,27 +4,25 @@ import os
 import socket
 import psutil
 from datetime import timedelta
-import pytz
 
 app = Flask(__name__)
 
-PKT = pytz.timezone('Asia/Karachi')
-
-def get_current_pkt_time():
-    return datetime.now(PKT)
 
 def get_pod_name():
     return os.environ.get('HOSTNAME', socket.gethostname())
+
 
 def get_git_sha():
     sha = os.environ.get('GIT_SHA')
     if sha:
         return sha[:7]
+
     try:
         with open('git_sha.txt') as f:
             return f.read().strip()[:7]
     except:
         return "local-dev"
+
 
 def get_uptime():
     try:
@@ -34,6 +32,7 @@ def get_uptime():
     except:
         return "unknown"
 
+
 def get_version():
     try:
         with open("version.txt") as f:
@@ -41,20 +40,14 @@ def get_version():
     except:
         return "v1.0.0"
 
+
 def get_real_build_time():
     try:
         with open('build_time.txt') as f:
-            build_time_str = f.read().strip()
-            if 'PKT' in build_time_str:
-                return build_time_str
-            try:
-                dt = datetime.strptime(build_time_str, "%Y-%m-%d %H:%M:%S")
-                pkt_dt = PKT.localize(dt)
-                return pkt_dt.strftime("%Y-%m-%d %H:%M:%S PKT")
-            except:
-                return build_time_str
+            return f.read().strip()
     except:
-        return get_current_pkt_time().strftime("%Y-%m-%d %H:%M:%S PKT")
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S PKT")
+
 
 def get_build_info():
     try:
@@ -62,6 +55,8 @@ def get_build_info():
             return f.read().strip()
     except:
         return "Build info not available"
+
+
 
 def get_build_details():
     details = {}
@@ -72,6 +67,7 @@ def get_build_details():
                     key, value = line.strip().split(': ', 1)
                     details[key] = value
     except:
+      
         details = {
             'BUILD_ID': os.environ.get('BUILD_ID', 'N/A'),
             'TRIGGER_NAME': os.environ.get('TRIGGER_NAME', 'bank-trigger'),
@@ -85,6 +81,7 @@ def get_build_details():
         }
     return details
 
+
 @app.route('/')
 def home():
     real_build_time = get_real_build_time()
@@ -93,7 +90,7 @@ def home():
     build_details = get_build_details()   
     
     transactions = [
-        {"type": "Dealocker", "amount": "$120", "desc": "Grocery Store", "time": "10:32 AM"},
+        {"type": "Debit", "amount": "$120", "desc": "Grocery Store", "time": "10:32 AM"},
         {"type": "Credit", "amount": "$500", "desc": "Salary Deposit", "time": "09:00 AM"},
         {"type": "Debit", "amount": "$60", "desc": "Uber Ride", "time": "Yesterday"},
         {"type": "Debit", "amount": "$45", "desc": "Netflix", "time": "Yesterday"},
@@ -109,27 +106,27 @@ def home():
     ]
 
     logs = [
-        {"time": get_current_pkt_time().strftime("%H:%M:%S"), "level": "INFO", "message": f"✅ Git commit: {real_git_sha} - Deployed via Cloud Build"},
-        {"time": real_build_time.split()[1] if ' ' in real_build_time else get_current_pkt_time().strftime("%H:%M:%S"), "level": "SUCCESS", "message": f"🚀 Cloud Build triggered deployment at {real_build_time}"},
-        {"time": (get_current_pkt_time() - timedelta(minutes=2)).strftime("%H:%M:%S"), "level": "INFO", "message": "📦 Image pushed to Artifact Registry"},
-        {"time": (get_current_pkt_time() - timedelta(minutes=3)).strftime("%H:%M:%S"), "level": "INFO", "message": "🔄 GKE rolling update initiated"},
-        {"time": (get_current_pkt_time() - timedelta(minutes=5)).strftime("%H:%M:%S"), "level": "INFO", "message": "✅ Deployment successful - 2 pods running"},
+        {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"✅ Git commit: {real_git_sha} - Deployed via Cloud Build"},
+        {"time": real_build_time.split()[1] if ' ' in real_build_time else datetime.now().strftime("%H:%M:%S"), "level": "SUCCESS", "message": f"🚀 Cloud Build triggered deployment at {real_build_time}"},
+        {"time": (datetime.now() - timedelta(minutes=2)).strftime("%H:%M:%S"), "level": "INFO", "message": "📦 Image pushed to Artifact Registry"},
+        {"time": (datetime.now() - timedelta(minutes=3)).strftime("%H:%M:%S"), "level": "INFO", "message": "🔄 GKE rolling update initiated"},
+        {"time": (datetime.now() - timedelta(minutes=5)).strftime("%H:%M:%S"), "level": "INFO", "message": "✅ Deployment successful - 2 pods running"},
     ]
 
     cpu = psutil.cpu_percent()
     memory = psutil.virtual_memory().percent
 
     alerts = [
-        {"level": "SUCCESS", "message": f"Latest Git commit {real_git_sha} deployed successfully"},
-        {"level": "INFO", "message": f"Last Cloud Build: {real_build_time}"},
-        {"level": "INFO", "message": f"Build ID: {build_details.get('BUILD_ID', 'N/A')[:20]}..."},
-        {"level": "INFO", "message": "GKE cluster health: All nodes ready"},
+        {"level": "SUCCESS", "message": f"✅ Latest Git commit {real_git_sha} deployed successfully"},
+        {"level": "INFO", "message": f"⏱️  Last Cloud Build: {real_build_time}"},
+        {"level": "INFO", "message": f"🆔 Build ID: {build_details.get('BUILD_ID', 'N/A')[:20]}..."},
+        {"level": "INFO", "message": "🟢 GKE cluster health: All nodes ready"},
     ]
 
     return render_template(
         "index.html",
         version=get_version(),
-        time=get_current_pkt_time().strftime("%Y-%m-%d %H:%M:%S PKT"),
+        time=datetime.now().strftime("%Y-%m-%d %H:%M:%S PKT"),
         balance=8247,
         transactions=transactions,
         services=services,
@@ -147,8 +144,9 @@ def home():
         memory=memory,
         alerts=alerts,
         build_info=real_build_info,
-        build_details=build_details,
+        build_details=build_details,  
     )
+
 
 @app.route('/api')
 def api():
@@ -156,7 +154,7 @@ def api():
     return jsonify({
         "version": get_version(),
         "status": "healthy",
-        "timestamp": get_current_pkt_time().isoformat(),
+        "timestamp": datetime.now().isoformat(),
         "pod": get_pod_name(),
         "last_build_time": get_real_build_time(),
         "git_commit": get_git_sha(),
@@ -169,16 +167,18 @@ def api():
         }
     })
 
+
 @app.route('/api/logs')
 def api_logs():
     build_details = get_build_details()
     logs = [
-        {"time": get_current_pkt_time().strftime("%H:%M:%S"), "level": "INFO", "message": f"Git commit: {get_git_sha()} - Active"},
-        {"time": get_current_pkt_time().strftime("%H:%M:%S"), "level": "INFO", "message": f"Build ID: {build_details.get('BUILD_ID', 'N/A')[:20]}..."},
-        {"time": get_current_pkt_time().strftime("%H:%M:%S"), "level": "INFO", "message": f"Trigger: {build_details.get('TRIGGER_NAME', 'N/A')}"},
-        {"time": get_current_pkt_time().strftime("%H:%M:%S"), "level": "DEBUG", "message": "Health check passed"}
+        {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"Git commit: {get_git_sha()} - Active"},
+        {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"Build ID: {build_details.get('BUILD_ID', 'N/A')[:20]}..."},
+        {"time": datetime.now().strftime("%H:%M:%S"), "level": "INFO", "message": f"Trigger: {build_details.get('TRIGGER_NAME', 'N/A')}"},
+        {"time": datetime.now().strftime("%H:%M:%S"), "level": "DEBUG", "message": "Health check passed"}
     ]
     return jsonify({"logs": logs})
+
 
 @app.route('/api/deployment-info')
 def deployment_info():
@@ -193,8 +193,9 @@ def deployment_info():
         "trigger_name": build_details.get('TRIGGER_NAME', 'N/A'),
         "branch": build_details.get('BRANCH_NAME', 'main'),
         "repo": build_details.get('REPO_NAME', 'bank-monitoring-dashboard'),
-        "timestamp": get_current_pkt_time().isoformat()
+        "timestamp": datetime.now().isoformat()
     })
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=False)

@@ -4,9 +4,14 @@ steps:
     args:
       - "-c"
       - |
+        # Create build info directory if it doesn't exist
         mkdir -p app-code
+
+        # Write Git and Build info
         echo $SHORT_SHA > app-code/git_sha.txt
-        echo "$(TZ='Asia/Karachi' date '+%Y-%m-%d %H:%M:%S PKT')" > app-code/build_time.txt
+        echo "$(date '+%Y-%m-%d %H:%M:%S PKT')" > app-code/build_time.txt
+
+        # Write detailed build info
         cat > app-code/build_details.txt << EOF
         BUILD_ID: $BUILD_ID
         TRIGGER_NAME: $TRIGGER_NAME
@@ -17,8 +22,9 @@ steps:
         SHORT_SHA: $SHORT_SHA
         PROJECT_ID: $PROJECT_ID
         LOCATION: $LOCATION
-        BUILD_START_TIME: $(TZ='Asia/Karachi' date '+%Y-%m-%d %H:%M:%S PKT')
+        BUILD_START_TIME: $(date '+%Y-%m-%d %H:%M:%S PKT')
         EOF
+
         echo "✅ Build info injected for commit: $SHORT_SHA"
         cat app-code/build_details.txt
 
